@@ -6,12 +6,15 @@ import logging
 import telegram
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, CallbackContext, ConversationHandler
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+import threading
 
 # 允許 logging。當出現error時能知道哪裡出了問題。
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+
+flag = False
 
 # 創造Updater，將token pass給Updater。
 # 在v12中要加入“use_context = True”（之後版本不需要），用於有新訊息是回應。
@@ -66,13 +69,28 @@ def about_handler(update, context: CallbackContext):
 
     # chatbot在接受用戶輸入/start後的output內容
 
+def run(): 
+    while True: 
+        print('thread running') 
+        global flag 
+        if flag:
+            print('+++++++++++++++++')
+            break
 # 開始拍攝
 def Record_handler(update, context: CallbackContext) :
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
     update.message.reply_text("開始拍攝！")
+    global flag
+    flag = False
+    t1 = threading.Thread(target = run) 
+    t1.start()
+    # t1.join()
+
 # 停止拍攝
 def End_handler(update, context: CallbackContext) :
+    global flag
+    flag = True
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
     update.message.reply_text("停止拍攝，影片已儲存至雲端。")
@@ -81,7 +99,7 @@ def End_handler(update, context: CallbackContext) :
 def getVideo_handler(update, context: CallbackContext) :
     time.sleep(0.5)
     reply_markup = InlineKeyboardMarkup([[
-        InlineKeyboardButton("點我前往", url = "https://www.youtube.com/?gl=TW&hl=zh-TW")]])
+        InlineKeyboardButton("點我前往", url = "https://onedrive.live.com/?authkey=%21AKanIMwDpSXJ3Qw&id=3FF58B5EF46ED07A%211886&cid=3FF58B5EF46ED07A")]])
 
     bot.send_message(update.message.chat.id, "行車記錄器檔案", reply_to_message_id = update.message.message_id,
                      reply_markup = reply_markup)
