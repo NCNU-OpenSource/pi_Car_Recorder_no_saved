@@ -5,7 +5,7 @@ import os
 import os.path
 import logging
 import telegram
-import picamera
+#import picamera
 import datetime as dt
 from time import sleep
 from subprocess import call
@@ -125,7 +125,12 @@ def getVideo_handler(update, context: CallbackContext) :
 
     bot.send_message(update.message.chat.id, "行車記錄器檔案", reply_to_message_id = update.message.message_id,
                      reply_markup = reply_markup)
-
+def Search_handler(update, context: CallbackContext) :
+    T = update.message.text.split(" ")
+    bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
+    time.sleep(0.5)
+    update.message.reply_text(T[1])
+    bot.sendVideo(update.message.chat_id, video = open(T[1] + '.mp4'))
 def reply_handler(update, context: CallbackContext):
     """Reply message."""
     text = update.message.text
@@ -152,6 +157,7 @@ def main():
     dp.add_handler(CommandHandler("record", Record_handler)) # 開始拍攝
     dp.add_handler(CommandHandler("end", End_handler)) # 停止拍攝
     dp.add_handler(CommandHandler("get", getVideo_handler)) # 取得影片雲端連結
+    dp.add_handler(CommandHandler("search", Search_handler)) # 搜尋本地影片
     dp.add_handler(CommandHandler("help", help_handler)) # 顯示幫助的command
     dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️的command
     dp.add_handler(MessageHandler(Filters.text, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
