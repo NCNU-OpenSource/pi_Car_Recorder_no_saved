@@ -1,9 +1,14 @@
+#-*- coding: UTF-8 -*-
 import time
 import json
 import os
 import os.path
 import logging
 import telegram
+import picamera
+import datetime as dt
+from time import sleep
+from subprocess import call
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, CallbackContext, ConversationHandler
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import threading
@@ -22,6 +27,30 @@ flag = False
 TOKEN = "1499587189:AAGtXXGIVnPekHxSjBpZmp4voDUc_Fl7h6Q"
 bot = telegram.Bot(token = TOKEN)
 updater = Updater(TOKEN, use_context = True)
+
+def run():
+    global flag
+    with picamera.PiCamera() as camera:
+        while(1):
+            #if flag == True:
+            #   camera.stop_recording()
+                  #  return
+            startTime = dt.datetime.now().strftime('%Y%m%d%H%M%S')
+            camera.rotation = 180
+            camera.start_preview()
+            camera.annotate_background = picamera.Color('black')  
+            camera.annotate_text = dt.datetime.now().strftime('%Y%-m%-d %H:%M:%S')
+            camera.start_recording("%s.h264"% startTime)
+            start = dt.datetime.now()
+            while (dt.datetime.now() - start).seconds < 5:
+                camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                camera.wait_recording(0.2)
+                if flag == True:
+                    camera.stop_recording()
+                    return
+            camera.stop_recording()
+         #command = ("MP4Box -add %s.h264 %s.mp4" %(startTime, startTime))
+         #call([command], shell=True) 
 
 def start_handler(update, context: CallbackContext):
     # reply_markup = ReplyKeyboardMarkup([[
@@ -69,13 +98,6 @@ def about_handler(update, context: CallbackContext):
 
     # chatbot在接受用戶輸入/start後的output內容
 
-def run(): 
-    while True: 
-        print('thread running') 
-        global flag 
-        if flag:
-            print('+++++++++++++++++')
-            break
 # 開始拍攝
 def Record_handler(update, context: CallbackContext) :
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
