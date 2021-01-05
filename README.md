@@ -1,5 +1,7 @@
-# 歡迎使用{ pi 攝者不救 }
-我們的 telegram bot id 是 : **@CHEN_DASH_bot**
+# 歡迎使用{ PI 攝者不救 }
+## BOT_id
+**@CHEN_DASH_bot**
+
 
 使用前要記得幫您的樹莓派安裝以下套件
 ```shell
