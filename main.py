@@ -52,6 +52,13 @@ def run():
          #command = ("MP4Box -add %s.h264 %s.mp4" %(startTime, startTime))
          #call([command], shell=True) 
 
+def do_backup():
+    os.system('python3 rmVideo.py')
+    os.chdir('/home/pi/video/1091_LSA_final')
+    os.system('python3 transVideo.py')
+    os.system('rclone copy /home/pi/video/1091_LSA_final/mp4Video pi_video:backup')
+    return
+
 def start_handler(update, context: CallbackContext):
     # reply_markup = ReplyKeyboardMarkup([[
     #     KeyboardButton("/about"),
@@ -65,7 +72,7 @@ def start_handler(update, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
     update.message.reply_text("PI攝者不救🤖能根據關鍵字執行行車記錄器內容\n\n❓關於指令使用方法，請輸入 /help \n💬關於PI攝者不救🤖，或想要報錯和反饋💭，請輸入 /about") # 給user的output。output可以分開多次使用update.message.reply_text()。
-    reply_markup = ReplyKeyboardMarkup([[KeyboardButton("/about")]
+    reply_markup = ReplyKeyboardMarkup([[KeyboardButton("/about"), KeyboardButton("/backup")]
         , [KeyboardButton("/record"), KeyboardButton("/end")]
         , [KeyboardButton("/get"), KeyboardButton("/help")]])
     bot.sendMessage(chat_id=update.message.chat_id, text="指令如下", reply_markup=reply_markup)
@@ -131,6 +138,14 @@ def Search_handler(update, context: CallbackContext) :
     time.sleep(0.5)
     update.message.reply_text(T[1])
     bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + T[1] + '.mp4', 'rb'))
+
+def backup_handler(update, context: CallbackContext):
+    bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
+    time.sleep(0.5)
+    update.message.reply_text("備份中...")
+    do_backup()
+    update.message.reply_text("備份完成!")
+
 def reply_handler(update, context: CallbackContext):
     """Reply message."""
     text = update.message.text
@@ -160,6 +175,7 @@ def main():
     dp.add_handler(CommandHandler("search", Search_handler)) # 搜尋本地影片
     dp.add_handler(CommandHandler("help", help_handler)) # 顯示幫助的command
     dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️的command
+    dp.add_handler(CommandHandler("backup", backup_handler)) # 顯示關於PI攝者不救🤖️的command
     dp.add_handler(MessageHandler(Filters.text, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
     dp.add_error_handler(error_handler) # 出現任何非以上能預設的error時會回覆用戶的訊息內容
 
