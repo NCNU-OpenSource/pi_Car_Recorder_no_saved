@@ -14,7 +14,7 @@ pip3 install
 #.h264轉.mp4
 sudo apt install gpac
 ```
-記得要到 raspi-config 裡面將 pi camera enable 喔
+記得要到 `raspi-config` 裡面將 pi camera enable 喔
 
 ## BOT_command
 - `start`
