@@ -6,7 +6,7 @@ import os
 import os.path
 import logging
 import telegram
-#import picamera
+import picamera
 import datetime as dt
 from time import sleep
 from subprocess import call
@@ -163,7 +163,7 @@ def Search_handler(update, context: CallbackContext) :
 
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    result = os.system('ls > record.txt')
+    result = os.system('ls mp4Video/ | grep .mp4 > record.txt')
     data = ""
     with open("record.txt", "r") as f:
         for line in f:
@@ -208,10 +208,7 @@ def reply_handler(update, context: CallbackContext):
     LEN = len(text)
     MP4 = text[LEN-4:LEN:+1]
     if (MP4 == ".mp4") :
-        #bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + text, 'rb'))
-        bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
-        time.sleep(0.5)
-        update.message.reply_text("text")
+        bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + text, 'rb'))
     # if (text == "/start") or (text == "/about") or (text == "/record") or (text == "/end") or (text == "/get") or (text == "/search") or (text == "/backup") or (text == "/help") :
     #     return
     else :
