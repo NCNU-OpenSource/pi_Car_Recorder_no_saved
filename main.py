@@ -43,7 +43,7 @@ def run():
             camera.start_preview()
             camera.annotate_background = picamera.Color('black')  
             camera.annotate_text = dt.datetime.now().strftime('%Y%-m%-d %H:%M:%S')
-            camera.start_recording("%s%s.h264"%(uid ,startTime))
+            camera.start_recording("%s@%s.h264"%(uid ,startTime))
             start = dt.datetime.now()
             while (dt.datetime.now() - start).seconds < 5:
                 camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
