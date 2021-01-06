@@ -27,20 +27,22 @@ flag = False
 TOKEN = "1499587189:AAGtXXGIVnPekHxSjBpZmp4voDUc_Fl7h6Q"
 bot = telegram.Bot(token = TOKEN)
 updater = Updater(TOKEN, use_context = True)
-
+dp = updater.dispatcher
+uid = None
 def run():
     global flag
+    global uid
     with picamera.PiCamera() as camera:
         while(1):
             #if flag == True:
             #   camera.stop_recording()
                   #  return
-            startTime = dt.datetime.now().strftime('%Y%m%d%H%M%S')
+            startTime = dt.datetime.now().strftime('%Y%m%d%H%M')
             camera.rotation = 180
             camera.start_preview()
             camera.annotate_background = picamera.Color('black')  
             camera.annotate_text = dt.datetime.now().strftime('%Y%-m%-d %H:%M:%S')
-            camera.start_recording("%s.h264"% startTime)
+            camera.start_recording("%s%s.h264"%(uid ,startTime))
             start = dt.datetime.now()
             while (dt.datetime.now() - start).seconds < 5:
                 camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -84,7 +86,7 @@ def help_handler(update, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
     update.message.reply_text("《🔍如何使用》\n若要開始拍攝\n輸入：「/record」\n若要停止拍攝\n輸入：「/end」\n關於PI攝者不救🤖️，或想要報錯和反饋💭\n輸入：「/about」") 
-    
+
 def about_handler(update, context: CallbackContext):
 
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -105,8 +107,12 @@ def about_handler(update, context: CallbackContext):
 
     # chatbot在接受用戶輸入/start後的output內容
 
+# def addOnedrive_handler(update, context: CallbackContext) :
+
 # 開始拍攝
 def Record_handler(update, context: CallbackContext) :
+    global uid 
+    uid = update.message.from_user.username
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
     update.message.reply_text("開始拍攝！")
@@ -132,12 +138,60 @@ def getVideo_handler(update, context: CallbackContext) :
 
     bot.send_message(update.message.chat.id, "行車記錄器檔案", reply_to_message_id = update.message.message_id,
                      reply_markup = reply_markup)
+# def test(update, context: CallbackContext) :
+#     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
+#     time.sleep(0.5)
+#     update.message.reply_text(update.)
+#查詢檔案名稱
 def Search_handler(update, context: CallbackContext) :
-    T = update.message.text.split(" ")
+#    T = update.message.text.split(" ")
+    # bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
+    # time.sleep(0.5)
+ #   update.message.reply_text(T[1])
+#    bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + T[1] + '.mp4', 'rb'))
+
+    # reply_markup = InlineKeyboardMarkup([[
+    #     InlineKeyboardButton("點我取得檔案名稱", callback_data="about_me")]])
+    # #     InlineKeyboardButton("Facebook", url = "https://www.facebook.com/herboratory/ "),
+    # #     InlineKeyboardButton("Website", url = "https://herboratory.ai/")],
+    # #     InlineKeyboardButton("關於徐長卿君🤖️ About Cynanchum kun🤖️", callback_data="about_me")]])
+
+    # bot.send_message(update.message.chat.id, "按下面連結查看檔案", reply_to_message_id = update.message.message_id,
+    #                  reply_markup = reply_markup)
+
+
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    update.message.reply_text(T[1])
-    bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + T[1] + '.mp4', 'rb'))
+    result = os.system('ls > record.txt')
+    data = ""
+    with open("record.txt", "r") as f:
+        for line in f:
+            data += line
+    os.system("rm record.txt")
+    update.message.reply_text(data)
+
+# def getClickButtonData(update, context):
+#     """
+#     透過上方的about function取得了callback_data="about_me"，針對取得的參數值去判斷說要回覆給使用者什麼訊息
+#     取得到對應的callback_data後，去判斷說是否有符合，有符合就執行 update.callback_query.edit_message_text
+#     傳送你想傳送的訊息給使用者
+#     由於這裡不再是單純發訊息，而是再用callback_query的方法，發訊息時，chat_id = update.message.chat_id是不能用，要改成chat_id = update.callback_query.message.chat_id
+#     而
+#     而偽裝輸入正在輸入中也要改成chat_id = update.callback_query.message.chat_id
+#     """
+    
+#     if update.callback_query.data == "about_me":
+#         bot.send_chat_action(chat_id = update.callback_query.message.chat_id, action = telegram.ChatAction.TYPING)
+#         time.sleep(1)
+#         result = os.system('ls > record.txt')
+#         data = ""
+#         with open("record.txt", "r") as f:
+#             for line in f:
+#                 data += line
+#         os.system("rm record.txt")
+#         update.callback_query.edit_message_text(data)
+#         # dp.add_handler(MessageHandler(Filters.text, search2))
+
 
 def backup_handler(update, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -149,10 +203,15 @@ def backup_handler(update, context: CallbackContext):
 def reply_handler(update, context: CallbackContext):
     """Reply message."""
     text = update.message.text
-    if (text != "/start") or (text != "/help") or (text != "/about") or (text != "/suwen"):
+    LEN = len(text)
+    MP4 = text[LEN-4:LEN:+1]
+    if (MP4 == ".mp4") :
+        bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + text, 'rb'))
+    else :
         bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
         time.sleep(0.5)
         update.message.reply_text("對不起，PI攝者不救🤖不能理解你說啥。🤔\n\n關於指令使用方法，請輸入 /help \n💬關於PI攝者不救🤖️，或想要報錯和反饋💭的聯繫方式，請輸入 /about")
+     
 
 def error_handler(bot, update, error, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -167,15 +226,17 @@ def main():
     """啟動bot"""
 # ...
     # 設定使用dispatcher，用來以後設定command和回覆用
-    dp = updater.dispatcher
+
     dp.add_handler(CommandHandler("start", start_handler)) # 啟動chatbot
+#    dp.add_handler(CommandHandler("add", addOnedrive_handler)) # 新增Onedrive網址
     dp.add_handler(CommandHandler("record", Record_handler)) # 開始拍攝
     dp.add_handler(CommandHandler("end", End_handler)) # 停止拍攝
     dp.add_handler(CommandHandler("get", getVideo_handler)) # 取得影片雲端連結
     dp.add_handler(CommandHandler("search", Search_handler)) # 搜尋本地影片
     dp.add_handler(CommandHandler("help", help_handler)) # 顯示幫助的command
     dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️的command
-    dp.add_handler(CommandHandler("backup", backup_handler)) # 顯示關於PI攝者不救🤖️的command
+    dp.add_handler(CommandHandler("backup", backup_handler)) # 手動備份檔案
+#    dp.add_handler(CallbackQueryHandler(getClickButtonData)) # 設定關於徐長卿君🤖️的按鈕連結
     dp.add_handler(MessageHandler(Filters.text, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
     dp.add_error_handler(error_handler) # 出現任何非以上能預設的error時會回覆用戶的訊息內容
 
@@ -195,3 +256,6 @@ def main():
 #運行main()，就會啟動bot。
 if __name__ == '__main__':
     main()
+
+
+#    update.message.reply_text(update.message.from_user.username) 
