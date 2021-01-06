@@ -24,7 +24,7 @@ sudo raspi-config
 選 camera
 ```
 ```
-由於本次實驗 pi camera 是反著插入固定 camera 的地方，因此有將錄影在輸出時轉動 180 度。
+由於本次實驗 pi camera 是反著插入固定 camera 的地方，因此將錄影在輸出時轉動 180 度。
 若 camera 為正著放，可以刪除 main.py 的第 42 行(camera.rotation = 180)
 ```
 - rclone (backup to OneDrive)
@@ -47,7 +47,7 @@ python3 rmVideo.py
 # 影片轉檔
 cd /home/pi/video/1091_LSA_final
 python3 transVideo.py
-# 備份mp4Video的影片至OneDrive
+# 備份 mp4Video 的影片至 OneDrive
 cd /home/pi
 rclone copy /home/pi/video/1091_LSA_final/mp4Video pi_video:backup
 ```
@@ -56,14 +56,36 @@ rclone copy /home/pi/video/1091_LSA_final/mp4Video pi_video:backup
 crontab -e
 */1 * * * * sh /home/pi/start.sh 2>&1 > /home/pi/logfile
 ```
+- 把 `main.py` 加入 service (在背景執行)
+```
+cd /etc/systemd/system
+sudo vim pi_video.service
+sudo systemctl enable pi_video.service
+sudo systemctl daemon-reload
+sudo systemctl start pi_video.service
+```
+- pi_video.service 內容
+```
+[Unit]
+Description=Shut up and take my video!!
+After=network.target
 
+[Service]
+ExecStart=/usr/bin/nohup /usr/bin/python3 /home/pi/video/1091_LSA_final/main.py &
+WorkingDirectory=/home/pi/video/1091_LSA_final/
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+```
 ## BOT_command
 - `start`
   - 開始操作
 - `about`
   - 關於PI攝者不救
-- `start`
-  - 開始操作 
 - `record`
   - 開始錄影
 - `end`
@@ -76,3 +98,8 @@ crontab -e
   - 手動備份
 - `help`
   - 如何使用
+## 工作分配
+- pi camera & 轉影片 : 蔣毓庭(主要)
+- 雲端備分 & 零零碎碎的工作 : 謝芝瑜(主要)
+- telegram bot : 林科佑 張宸瑜(主要)
+- 題目討論 & ppt & readMe & 抓蟲子 & 找資料 : 大家 
