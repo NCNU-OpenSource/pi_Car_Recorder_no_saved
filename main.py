@@ -42,7 +42,7 @@ def run():
             camera.start_preview()
             camera.annotate_background = picamera.Color('black')  
             camera.annotate_text = dt.datetime.now().strftime('%Y%-m%-d %H:%M:%S')
-            camera.start_recording("%s%s.h264"%(uid ,startTime))
+            camera.start_recording("/%s%s.h264"%(uid ,startTime))
             start = dt.datetime.now()
             while (dt.datetime.now() - start).seconds < 5:
                 camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -207,6 +207,8 @@ def reply_handler(update, context: CallbackContext):
     MP4 = text[LEN-4:LEN:+1]
     if (MP4 == ".mp4") :
         bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + text, 'rb'))
+    if (text == "/start") or (text == "/about") or (text == "/record") or (text == "/end") or (text == "/get") or (text == "/search") or (text == "/backup") or (text == "/help") :
+        return
     else :
         bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
         time.sleep(0.5)
@@ -237,7 +239,7 @@ def main():
     dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️的command
     dp.add_handler(CommandHandler("backup", backup_handler)) # 手動備份檔案
 #    dp.add_handler(CallbackQueryHandler(getClickButtonData)) # 設定關於徐長卿君🤖️的按鈕連結
-    dp.add_handler(MessageHandler(Filters.text, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
+    dp.add_handler(MessageHandler(Filters.command, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
     dp.add_error_handler(error_handler) # 出現任何非以上能預設的error時會回覆用戶的訊息內容
 
     # 專門紀錄所有errors的handler，對應def error()
