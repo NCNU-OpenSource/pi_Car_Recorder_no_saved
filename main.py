@@ -160,10 +160,11 @@ def Search_handler(update, context: CallbackContext) :
     # bot.send_message(update.message.chat.id, "按下面連結查看檔案", reply_to_message_id = update.message.message_id,
     #                  reply_markup = reply_markup)
 
-
+    global uid
+    uid = update.message.from_user.username
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    result = os.system('ls mp4Video/ | grep .mp4 > record.txt')
+    result = os.system('ls mp4Video/%s | grep .mp4 > record.txt' %(uid))
     data = ""
     with open("record.txt", "r") as f:
         for line in f:
@@ -204,11 +205,13 @@ def backup_handler(update, context: CallbackContext):
 
 def reply_handler(update, context: CallbackContext):
     """Reply message."""
+    global uid 
+    uid = update.message.from_user.username
     text = update.message.text
     LEN = len(text)
     MP4 = text[LEN-4:LEN:+1]
     if (MP4 == ".mp4") :
-        bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + text, 'rb'))
+        bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/'+uid+'/'+ text, 'rb' ))
     # if (text == "/start") or (text == "/about") or (text == "/record") or (text == "/end") or (text == "/get") or (text == "/search") or (text == "/backup") or (text == "/help") :
     #     return
     else :
