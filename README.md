@@ -86,8 +86,6 @@ WantedBy=multi-user.target
   - 開始操作
 - `about`
   - 關於PI攝者不救
-- `start`
-  - 開始操作 
 - `record`
   - 開始錄影
 - `end`
