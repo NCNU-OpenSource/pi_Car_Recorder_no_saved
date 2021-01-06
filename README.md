@@ -19,7 +19,7 @@ sudo apt install gpac
 ```
 記得要到 `raspi-config` 裡面將 pi camera enable 喔
 - rclone (backup to OneDrive)
-[git-rclone4pi setup](https://github.com/pageauc/rclone4pi/wiki#how-to-configure-a-remote-storage-service)
+[git-rclone4pi setup](https://github.com/pageauc/rclone4pi/wiki#manual-install)
 - 如果使用Linux server版本，可於筆電反向代理開啟瀏覽器，授權OneDrive帳號
 ```shell=
 ssh -L 53682:127.0.0.1:53682 [user name]@[your ip]
