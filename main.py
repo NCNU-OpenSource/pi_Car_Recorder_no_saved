@@ -40,12 +40,14 @@ def run():
                   #  return
             startTime = dt.datetime.now().strftime('%Y%m%d%H%M')
             camera.rotation = 180
+            # camera.brightness = 30
+            camera.resolution = (1280, 720)
             camera.start_preview()
             camera.annotate_background = picamera.Color('black')  
             camera.annotate_text = dt.datetime.now().strftime('%Y%-m%-d %H:%M:%S')
             camera.start_recording("%s@%s.h264"%(uid ,startTime))
             start = dt.datetime.now()
-            while (dt.datetime.now() - start).seconds < 5:
+            while (dt.datetime.now() - start).seconds < 60:
                 camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 camera.wait_recording(0.2)
                 if flag == True:
@@ -77,6 +79,7 @@ def start_handler(update, context: CallbackContext):
     update.message.reply_text("PI攝者不救🤖能根據關鍵字執行行車記錄器內容\n\n❓關於指令使用方法，請輸入 /help \n💬關於PI攝者不救🤖，或想要報錯和反饋💭，請輸入 /about") # 給user的output。output可以分開多次使用update.message.reply_text()。
     reply_markup = ReplyKeyboardMarkup([[KeyboardButton("/about"), KeyboardButton("/backup")]
         , [KeyboardButton("/record"), KeyboardButton("/end")]
+        , [KeyboardButton("/search")]
         , [KeyboardButton("/get"), KeyboardButton("/help")]])
     bot.sendMessage(chat_id=update.message.chat_id, text="指令如下", reply_markup=reply_markup)
 
@@ -86,8 +89,9 @@ def help_handler(update, context: CallbackContext):
     # chatbot在接受用戶輸入/start後的output內容
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    update.message.reply_text("《🔍如何使用》\n若要開始拍攝\n輸入：「/record」\n若要停止拍攝\n輸入：「/end」\n關於PI攝者不救🤖️，或想要報錯和反饋💭\n輸入：「/about」") 
-
+   # update.message.reply_text("《🔍如何使用》\n若要開始拍攝\n輸入：「/record」\n若要停止拍攝\n輸入：「/end」\n關於PI攝者不救🤖️，或想要報錯和反饋💭\n輸入：「/about」") 
+    
+    bot.send_message(update.message.chat.id, "<u>《🔍如何使用》</u>\n\n<b>/start</b>  :  開始操作\n\n<b>/about</b>  :  關於PI攝者不救與報錯\n\n<b>/record</b>  :  開始拍攝\n\n<b>/end</b>  :  停止拍攝\n\n<b>/get</b>  :  取得影片雲端連結\n\n<b>/search</b>  :  從本地搜尋影片\n\n<b>/backup</b>  :  手動備份影片到雲端\n\n<b>/help</b>  :  如何使用" , parse_mode=ParseMode.HTML)
 def about_handler(update, context: CallbackContext):
 
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -164,15 +168,15 @@ def Search_handler(update, context: CallbackContext) :
     uid = update.message.from_user.username
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    result = os.system('ls mp4Video/%s | grep .mp4 > record.txt' %(uid))
+    result = os.system('ls mp4Video/%s/ | grep .mp4 > ./mp4Video/%s/record.txt' %(uid, uid))
     data = ""
-    with open("record.txt", "r") as f:
+    with open("./mp4Video/"+uid+"/record.txt", "r") as f:
         for line in f:
-            data += "<pre>" +line + "</pre>"
-    os.system("rm record.txt")
+            data += "<pre>" +line + "</pre>\n"
+    #os.system("rm record.txt")
     bot.send_message(update.message.chat.id, data , parse_mode=ParseMode.HTML)
-
-
+    time.sleep(0.5)
+    bot.send_message(update.message.chat.id,"Select the video name below to copy and paste!")
 # def getClickButtonData(update, context):
 #     """
 #     透過上方的about function取得了callback_data="about_me"，針對取得的參數值去判斷說要回覆給使用者什麼訊息
@@ -209,11 +213,16 @@ def reply_handler(update, context: CallbackContext):
     uid = update.message.from_user.username
     text = update.message.text
     LEN = len(text)
-    MP4 = text[LEN-4:LEN:+1]
+    MP4 = text[LEN-4:LEN:+1] 
     if (MP4 == ".mp4") :
-        bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/'+uid+'/'+ text, 'rb' ))
-    # if (text == "/start") or (text == "/about") or (text == "/record") or (text == "/end") or (text == "/get") or (text == "/search") or (text == "/backup") or (text == "/help") :
-    #     return
+        with open('./mp4Video/'+uid+'/record.txt', 'r+', encoding='utf8') as mfile :
+            for line in mfile.readlines() :
+                if text not in line :
+                    continue
+                else :
+                    bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/'+uid+'/'+ text, 'rb' ))
+                    return
+            update.message.reply_text("video not found")
     else :
         bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
         time.sleep(0.5)
