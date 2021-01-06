@@ -18,6 +18,15 @@ pip3 install picamera
 sudo apt install gpac
 ```
 記得要到 `raspi-config` 裡面將 pi camera enable 喔
+```
+sudo raspi-config
+選 inter face option
+選 camera
+```
+```
+由於本次實驗 pi camera 是反著插入固定 camera 的地方，因此有將錄影在輸出時轉動 180 度。
+若 camera 為正著放，可以刪除 main.py 的第 42 行(camera.rotation = 180)
+```
 - rclone (backup to OneDrive)
 [git-rclone4pi setup](https://github.com/pageauc/rclone4pi/wiki#manual-install)
 - 如果使用Linux server版本，可於筆電反向代理開啟瀏覽器，授權OneDrive帳號
