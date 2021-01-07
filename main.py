@@ -65,14 +65,9 @@ def do_backup():
     return
 
 def start_handler(update, context: CallbackContext):
-    # reply_markup = ReplyKeyboardMarkup([[
-    #     KeyboardButton("/about"),
-    #     KeyboardButton("/help")],
-    #     [KeyboardButton("/start")]])
-    # bot.sendMessage(chat_id=-1, text='選項如下:', reply_markup=reply_markup)
     # chatbot在接受用戶輸入/start後的output內容
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING) # 會顯示chatbot正在輸入中，增加對話真實感
-    time.sleep(0.5) # 在顯示輸入中後停頓1秒，然後顯示下一句code的文字
+    time.sleep(0.5) # 在顯示輸入中後停頓0.5秒，然後顯示下一句code的文字
     update.message.reply_text("Hello! 你好👋，{}！我是PI攝者不救🤖".format(update.message.from_user.first_name)) # 給user的output
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
@@ -86,33 +81,23 @@ def start_handler(update, context: CallbackContext):
 
 def help_handler(update, context: CallbackContext):
 
-    # chatbot在接受用戶輸入/start後的output內容
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-   # update.message.reply_text("《🔍如何使用》\n若要開始拍攝\n輸入：「/record」\n若要停止拍攝\n輸入：「/end」\n關於PI攝者不救🤖️，或想要報錯和反饋💭\n輸入：「/about」") 
-    
     bot.send_message(update.message.chat.id, "<u>《🔍如何使用》</u>\n\n<b>/start</b>  :  開始操作\n\n<b>/about</b>  :  關於PI攝者不救與報錯\n\n<b>/record</b>  :  開始拍攝\n\n<b>/end</b>  :  停止拍攝\n\n<b>/get</b>  :  取得影片雲端連結\n\n<b>/search</b>  :  從本地搜尋影片\n\n<b>/backup</b>  :  手動備份影片到雲端\n\n<b>/help</b>  :  如何使用" , parse_mode=ParseMode.HTML)
+
 def about_handler(update, context: CallbackContext):
 
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
     update.message.reply_text("感謝使用PI攝者不救🤖️。\n這是一個行車記錄器的BOT，可以控制開始與關閉錄影，也可以取得影片檔案的雲端連結。") 
-    # bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
-    # time.sleep(1)
-    # update.message.reply_text("徐長卿君🤖️儲存的資料很多，所有資料都是主人親手校對整理，出錯在所難免，因此若想要報錯，又或者有任何疑問、建議，或者想透過徐長卿君🤖️宣傳、洽談合作，可以去扶疏堂研究所的Facebook page私訊聯繫，或者歡迎瀏覽扶疏堂研究所的網站看看其他項目和服務。")
-    
+
     reply_markup = InlineKeyboardMarkup([[
         InlineKeyboardButton("點我前往", url = "https://www.facebook.com/profile.php?id=100003827470832")]])
-    #     InlineKeyboardButton("Facebook", url = "https://www.facebook.com/herboratory/ "),
-    #     InlineKeyboardButton("Website", url = "https://herboratory.ai/")],
-    #     InlineKeyboardButton("關於徐長卿君🤖️ About Cynanchum kun🤖️", callback_data="about_me")]])
 
     bot.send_message(update.message.chat.id, "若要回報錯誤，透過以下連結Facebook私訊林科左回報。", reply_to_message_id = update.message.message_id,
                      reply_markup = reply_markup)
 
     # chatbot在接受用戶輸入/start後的output內容
-
-# def addOnedrive_handler(update, context: CallbackContext) :
 
 # 開始拍攝
 def Record_handler(update, context: CallbackContext) :
@@ -125,7 +110,6 @@ def Record_handler(update, context: CallbackContext) :
     flag = False
     t1 = threading.Thread(target = run) 
     t1.start()
-    # t1.join()
 
 # 停止拍攝
 def End_handler(update, context: CallbackContext) :
@@ -143,27 +127,9 @@ def getVideo_handler(update, context: CallbackContext) :
 
     bot.send_message(update.message.chat.id, "行車記錄器檔案", reply_to_message_id = update.message.message_id,
                      reply_markup = reply_markup)
-# def test(update, context: CallbackContext) :
-#     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
-#     time.sleep(0.5)
-#     update.message.reply_text(update.)
+
 #查詢檔案名稱
 def Search_handler(update, context: CallbackContext) :
-#    T = update.message.text.split(" ")
-    # bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
-    # time.sleep(0.5)
- #   update.message.reply_text(T[1])
-#    bot.send_video(chat_id = update.message.chat_id, video = open('mp4Video/' + T[1] + '.mp4', 'rb'))
-
-    # reply_markup = InlineKeyboardMarkup([[
-    #     InlineKeyboardButton("點我取得檔案名稱", callback_data="about_me")]])
-    # #     InlineKeyboardButton("Facebook", url = "https://www.facebook.com/herboratory/ "),
-    # #     InlineKeyboardButton("Website", url = "https://herboratory.ai/")],
-    # #     InlineKeyboardButton("關於徐長卿君🤖️ About Cynanchum kun🤖️", callback_data="about_me")]])
-
-    # bot.send_message(update.message.chat.id, "按下面連結查看檔案", reply_to_message_id = update.message.message_id,
-    #                  reply_markup = reply_markup)
-
     global uid
     uid = update.message.from_user.username
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -177,28 +143,6 @@ def Search_handler(update, context: CallbackContext) :
     bot.send_message(update.message.chat.id, data , parse_mode=ParseMode.HTML)
     time.sleep(0.5)
     bot.send_message(update.message.chat.id,"Select the video name below to copy and paste!")
-# def getClickButtonData(update, context):
-#     """
-#     透過上方的about function取得了callback_data="about_me"，針對取得的參數值去判斷說要回覆給使用者什麼訊息
-#     取得到對應的callback_data後，去判斷說是否有符合，有符合就執行 update.callback_query.edit_message_text
-#     傳送你想傳送的訊息給使用者
-#     由於這裡不再是單純發訊息，而是再用callback_query的方法，發訊息時，chat_id = update.message.chat_id是不能用，要改成chat_id = update.callback_query.message.chat_id
-#     而
-#     而偽裝輸入正在輸入中也要改成chat_id = update.callback_query.message.chat_id
-#     """
-    
-#     if update.callback_query.data == "about_me":
-#         bot.send_chat_action(chat_id = update.callback_query.message.chat_id, action = telegram.ChatAction.TYPING)
-#         time.sleep(1)
-#         result = os.system('ls > record.txt')
-#         data = ""
-#         with open("record.txt", "r") as f:
-#             for line in f:
-#                 data += line
-#         os.system("rm record.txt")
-#         update.callback_query.edit_message_text(data)
-#         # dp.add_handler(MessageHandler(Filters.text, search2))
-
 
 def backup_handler(update, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -226,13 +170,13 @@ def reply_handler(update, context: CallbackContext):
     else :
         bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
         time.sleep(0.5)
-        update.message.reply_text("對不起，PI攝者不救🤖不能理解你說啥。🤔\n\n關於指令使用方法，請輸入 /help \n💬關於PI攝者不救🤖️，或想要報錯和反饋💭的聯繫方式，請輸入 /about")
+        update.message.reply_text("對不起，PI攝者不救🤖不能理解你說啥。🤔\n\n關於指令使用方法，請輸入 /help")
      
 
 def error_handler(bot, update, error, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    update.message.reply_text("對不起，PI攝者不救🤖不能理解你說啥。🤔\n\n關於指令使用方法，請輸入 /help \n💬關於PI攝者不救🤖️，或想要報錯和反饋💭的聯繫方式，請輸入 /about")
+    update.message.reply_text("對不起，PI攝者不救🤖不能理解你說啥。🤔\n\n關於指令使用方法，請輸入 /help")
 
 def error(update, context):
     """紀錄Updates時出現的errors。出現error時console就會print出下面logger.warning的內容"""
@@ -244,15 +188,13 @@ def main():
     # 設定使用dispatcher，用來以後設定command和回覆用
 
     dp.add_handler(CommandHandler("start", start_handler)) # 啟動chatbot
-#    dp.add_handler(CommandHandler("add", addOnedrive_handler)) # 新增Onedrive網址
     dp.add_handler(CommandHandler("record", Record_handler)) # 開始拍攝
     dp.add_handler(CommandHandler("end", End_handler)) # 停止拍攝
     dp.add_handler(CommandHandler("get", getVideo_handler)) # 取得影片雲端連結
     dp.add_handler(CommandHandler("search", Search_handler)) # 搜尋本地影片
     dp.add_handler(CommandHandler("help", help_handler)) # 顯示幫助的command
-    dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️的command
+    dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️獲報錯
     dp.add_handler(CommandHandler("backup", backup_handler)) # 手動備份檔案
-#    dp.add_handler(CallbackQueryHandler(getClickButtonData)) # 設定關於徐長卿君🤖️的按鈕連結
     dp.add_handler(MessageHandler(Filters.text, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
     dp.add_error_handler(error_handler) # 出現任何非以上能預設的error時會回覆用戶的訊息內容
 
@@ -272,6 +214,3 @@ def main():
 #運行main()，就會啟動bot。
 if __name__ == '__main__':
     main()
-
-
-#    update.message.reply_text(update.message.from_user.username) 
