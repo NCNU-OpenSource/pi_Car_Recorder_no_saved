@@ -63,7 +63,7 @@ cd /home/pi
 vim start.sh
 # 執行備份
 cd /home/pi/video/1091_LSA_final/mp4Video
-# 執行了rmVideo.py, transVideo.py
+# `backup.py`執行了rmVideo.py, transVideo.py
 python3 backup.py
 ```
 - crontab:  每分鐘執行`/home/pi/`下的`start.sh`檔案，將結果記錄到`logfile`中
