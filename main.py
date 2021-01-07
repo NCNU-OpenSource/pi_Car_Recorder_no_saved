@@ -173,17 +173,30 @@ def reply_handler(update, context: CallbackContext):
         time.sleep(0.5)
         update.message.reply_text("對不起，PI攝者不救🤖不能理解你說啥。🤔\n\n關於指令使用方法，請輸入 /help")
 
-def sun_handler(update, context: CallbackContext):
-    global camera_mode
+def light_handler(update, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
-    camera_mode = 40
-    update.message.reply_text("已更改為日間模式")
+    time.sleep(0.5)
+    reply_markup = InlineKeyboardMarkup([[
+        InlineKeyboardButton("日間模式", callback_data = "sun")],
+        [InlineKeyboardButton("夜間模式", callback_data="night")]])
 
-def night_handler(update, context: CallbackContext):
+    bot.send_message(update.message.chat.id, "透過下面按鈕調整攝影亮度", reply_to_message_id = update.message.message_id,
+                     reply_markup = reply_markup)
+
+def getClickButtonData(update, context):
     global camera_mode
-    bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
-    camera_mode = 70
-    update.message.reply_text("已更改為夜間模式")
+
+    if update.callback_query.data == "sun":
+        camera_mode = 40
+        bot.send_chat_action(chat_id = update.callback_query.message.chat_id, action = telegram.ChatAction.TYPING)
+        time.sleep(0.5)
+        update.callback_query.edit_message_text("已更改為日間模式")
+
+    if update.callback_query.data == "night":
+        camera_mode = 70
+        bot.send_chat_action(chat_id = update.callback_query.message.chat_id, action = telegram.ChatAction.TYPING)
+        time.sleep(0.5)
+        update.callback_query.edit_message_text("已更改為夜間模式")
 
 def error_handler(bot, update, error, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -207,8 +220,8 @@ def main():
     dp.add_handler(CommandHandler("help", help_handler)) # 顯示幫助的command
     dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️獲報錯
     dp.add_handler(CommandHandler("backup", backup_handler)) # 手動備份檔案
-    dp.add_handler(CommandHandler("sun", sun_handler)) # 將鏡頭調整為日間模式
-    dp.add_handler(CommandHandler("night", night_handler)) # 將鏡頭調整為夜間模式
+    dp.add_handler(CallbackQueryHandler(getClickButtonData))  #按鈕連結
+    dp.add_handler(CommandHandler("light", light_handler)) # 將鏡頭調整為日間模式
     dp.add_handler(MessageHandler(Filters.text, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
     dp.add_error_handler(error_handler) # 出現任何非以上能預設的error時會回覆用戶的訊息內容
 
