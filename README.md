@@ -71,6 +71,7 @@ cd /home/pi/video/1091_LSA_final/mp4Video
 python3 backup.py
 ```
 - crontab:  每分鐘執行`/home/pi/`下的`start.sh`檔案，將結果記錄到`logfile`中
+- crontab 內容可以個人需要時間自行調整
 ```shell=
 crontab -e
 */1 * * * * sh /home/pi/start.sh 2>&1 > /home/pi/logfile
