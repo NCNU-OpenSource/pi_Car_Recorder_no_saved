@@ -21,7 +21,7 @@
 - `help`
   - 如何使用
   
-## 設定telegram bot
+### 設定telegram bot
 - 套件 
 ```shell
 # 用於 main.py
