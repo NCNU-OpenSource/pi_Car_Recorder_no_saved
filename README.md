@@ -110,4 +110,4 @@ WantedBy=multi-user.target
 - 雲端備分 & 零零碎碎的工作 : 謝芝瑜
 - telegram bot : 林科佑 張宸瑜
 - 超音波感測器 : 林科佑
-- 題目討論 & ppt & readMe & 抓蟲子 & 找資料 : 大家 
+- 題目討論 & 投影片 & readMe & 抓蟲子 & 找資料 : 大家 
