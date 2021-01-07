@@ -75,8 +75,8 @@ def start_handler(update, context: CallbackContext):
     reply_markup = ReplyKeyboardMarkup([[KeyboardButton("/about"), KeyboardButton("/help")]
         , [KeyboardButton("/light")]
         , [KeyboardButton("/record"), KeyboardButton("/end")]
-        , [KeyboardButton("/search"), KeyboardButton("/get")]
         , [KeyboardButton("/backup")]
+        , [KeyboardButton("/search"), KeyboardButton("/get")]
         ])
     bot.sendMessage(chat_id=update.message.chat_id, text="指令如下", reply_markup=reply_markup)
 
@@ -119,7 +119,7 @@ def End_handler(update, context: CallbackContext) :
     flag = True
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    update.message.reply_text("停止拍攝，影片已儲存至雲端。")
+    update.message.reply_text("停止拍攝，請輸入/backup指令後轉檔成mp4並備份至雲端。")
 
 # 取得影片雲端連結
 def getVideo_handler(update, context: CallbackContext) :
