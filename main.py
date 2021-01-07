@@ -72,11 +72,12 @@ def start_handler(update, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
     update.message.reply_text("PI攝者不救🤖能根據關鍵字執行行車記錄器內容\n\n❓關於指令使用方法，請輸入 /help \n💬關於PI攝者不救🤖，或想要報錯和反饋💭，請輸入 /about") # 給user的output。output可以分開多次使用update.message.reply_text()。
-    reply_markup = ReplyKeyboardMarkup([[KeyboardButton("/about"), KeyboardButton("/backup")]
+    reply_markup = ReplyKeyboardMarkup([[KeyboardButton("/about"), KeyboardButton("/help")]
+        , [KeyboardButton("/light")]
         , [KeyboardButton("/record"), KeyboardButton("/end")]
-        , [KeyboardButton("/search")]
-        , [KeyboardButton("/get"), KeyboardButton("/help")]
-        , [KeyboardButton("/sun"), KeyboardButton("/night")]])
+        , [KeyboardButton("/search"), KeyboardButton("/get")]
+        , [KeyboardButton("/backup")]
+        ])
     bot.sendMessage(chat_id=update.message.chat_id, text="指令如下", reply_markup=reply_markup)
 
 
@@ -84,7 +85,7 @@ def help_handler(update, context: CallbackContext):
 
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
     time.sleep(0.5)
-    bot.send_message(update.message.chat.id, "<u>《🔍如何使用》</u>\n\n<b>/start</b>  :  開始操作\n\n<b>/about</b>  :  關於PI攝者不救與報錯\n\n<b>/record</b>  :  開始拍攝\n\n<b>/end</b>  :  停止拍攝\n\n<b>/get</b>  :  取得影片雲端連結\n\n<b>/search</b>  :  從本地搜尋影片\n\n<b>/backup</b>  :  手動備份影片到雲端\n\n<b>/help</b>  :  如何使用" , parse_mode=ParseMode.HTML)
+    bot.send_message(update.message.chat.id, "<u>《🔍如何使用》</u>\n\n<b>/start</b>  :  開始操作\n\n<b>/about</b>  :  關於PI攝者不救與報錯\n\n<b>/record</b>  :  開始拍攝\n\n<b>/end</b>  :  停止拍攝\n\n<b>/get</b>  :  取得影片雲端連結\n\n<b>/search</b>  :  從本地搜尋影片\n\n<b>/backup</b>  :  手動備份影片到雲端\n\n<b>/light</b>  :  調日/夜間模式\n\n<b>/help</b>  :  如何使用" , parse_mode=ParseMode.HTML)
 
 def about_handler(update, context: CallbackContext):
 
