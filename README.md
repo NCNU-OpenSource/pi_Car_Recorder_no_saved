@@ -106,7 +106,8 @@ WantedBy=multi-user.target
 ```
 
 ## 工作分配
-- pi camera & 轉影片 : 蔣毓庭(主要)
-- 雲端備分 & 零零碎碎的工作 : 謝芝瑜(主要)
-- telegram bot : 林科佑 張宸瑜(主要)
+- pi camera & 轉影片 : 蔣毓庭
+- 雲端備分 & 零零碎碎的工作 : 謝芝瑜
+- telegram bot : 林科佑 張宸瑜
+- 超音波感測器 : 林科佑
 - 題目討論 & ppt & readMe & 抓蟲子 & 找資料 : 大家 
