@@ -30,17 +30,17 @@ bot = telegram.Bot(token = TOKEN)
 updater = Updater(TOKEN, use_context = True)
 dp = updater.dispatcher
 uid = None
+camera_mode = 50 # default value is 50
+
 def run():
     global flag
     global uid
+    global camera_mode
     with picamera.PiCamera() as camera:
         while(1):
-            #if flag == True:
-            #   camera.stop_recording()
-                  #  return
             startTime = dt.datetime.now().strftime('%Y%m%d%H%M')
             camera.rotation = 180
-            # camera.brightness = 30
+            camera.brightness = camera_mode
             camera.resolution = (1280, 720)
             camera.start_preview()
             camera.annotate_background = picamera.Color('black')  
@@ -54,8 +54,8 @@ def run():
                     camera.stop_recording()
                     return
             camera.stop_recording()
-         #command = ("MP4Box -add %s.h264 %s.mp4" %(startTime, startTime))
-         #call([command], shell=True) 
+        #command = ("MP4Box -add %s.h264 %s.mp4" %(startTime, startTime))
+        #call([command], shell=True) 
 
 def do_backup():
     os.system('python3 rmVideo.py')
@@ -75,7 +75,8 @@ def start_handler(update, context: CallbackContext):
     reply_markup = ReplyKeyboardMarkup([[KeyboardButton("/about"), KeyboardButton("/backup")]
         , [KeyboardButton("/record"), KeyboardButton("/end")]
         , [KeyboardButton("/search")]
-        , [KeyboardButton("/get"), KeyboardButton("/help")]])
+        , [KeyboardButton("/get"), KeyboardButton("/help")]
+        , [KeyboardButton("/sun"), KeyboardButton("/night")]])
     bot.sendMessage(chat_id=update.message.chat_id, text="指令如下", reply_markup=reply_markup)
 
 
@@ -171,7 +172,18 @@ def reply_handler(update, context: CallbackContext):
         bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
         time.sleep(0.5)
         update.message.reply_text("對不起，PI攝者不救🤖不能理解你說啥。🤔\n\n關於指令使用方法，請輸入 /help")
-     
+
+def sun_handler(update, context: CallbackContext):
+    global camera_mode
+    bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
+    camera_mode = 40
+    update.message.reply_text("已更改為日間模式")
+
+def night_handler(update, context: CallbackContext):
+    global camera_mode
+    bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
+    camera_mode = 70
+    update.message.reply_text("已更改為夜間模式")
 
 def error_handler(bot, update, error, context: CallbackContext):
     bot.send_chat_action(chat_id = update.message.chat_id, action = telegram.ChatAction.TYPING)
@@ -195,6 +207,8 @@ def main():
     dp.add_handler(CommandHandler("help", help_handler)) # 顯示幫助的command
     dp.add_handler(CommandHandler("about", about_handler)) # 顯示關於PI攝者不救🤖️獲報錯
     dp.add_handler(CommandHandler("backup", backup_handler)) # 手動備份檔案
+    dp.add_handler(CommandHandler("sun", sun_handler)) # 將鏡頭調整為日間模式
+    dp.add_handler(CommandHandler("night", night_handler)) # 將鏡頭調整為夜間模式
     dp.add_handler(MessageHandler(Filters.text, reply_handler)) # 設定若非設定command會回覆用戶不知道說啥的訊息
     dp.add_error_handler(error_handler) # 出現任何非以上能預設的error時會回覆用戶的訊息內容
 
