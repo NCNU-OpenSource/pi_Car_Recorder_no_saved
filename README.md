@@ -2,7 +2,8 @@
 
 ## BOT_id
 **@CHEN_DASH_bot**
-![](https://i.imgur.com/OBk6DKV.png)
+
+![](https://i.imgur.com/OBk6DKV.png =)
 
 ## BOT_command
 - `start`
